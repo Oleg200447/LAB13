@@ -63,7 +63,7 @@ int push(cash** head,cash**tail, char* id)
 	return SECCUES_PUSH;
 }
 
-int addElementInCash(hash** mas_hash, cash** head,cash **tail,unsigned int size,char *domen,char* id)
+int addElementInCash(hash** mas_hash, cash** head,cash **tail,unsigned int size,const char *domen,char* id)
 {
 	unsigned int new_size = (size + 1);
 
@@ -81,13 +81,16 @@ int addElementInCash(hash** mas_hash, cash** head,cash **tail,unsigned int size,
 	return new_size;
 }
 
-unsigned int chechCashForId(char* domen,const hash* mas_hash,unsigned int size)
+unsigned int chechCashForId(const char* domen,const hash* mas_hash,unsigned int size)
 {
 	const char* key = (char*)calloc(KB, sizeof(char));
 	if (key == NULL)
 		return MEMORY_MISTAKE;
 
 	key = makeHash(domen);
+
+	if (key == NULL)
+		return 0;
 
 	for (int i = 0; i <(int) size; i++)
 	{
@@ -104,7 +107,7 @@ unsigned int chechCashForId(char* domen,const hash* mas_hash,unsigned int size)
 
 void changePlaceOfElement(unsigned int place_in_masive, hash** mas_hash, cash** head, cash** tail, unsigned int size)
 {
-	if (place_in_masive == size || size==0)
+	if (place_in_masive == size || size==0 || place_in_masive>size)
 		return;
 
 	hash storer_hash = *(*mas_hash + (place_in_masive - 1));

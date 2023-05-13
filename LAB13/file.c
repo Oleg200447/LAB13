@@ -341,6 +341,10 @@ int findOneDomen(FILE *file,char *str,char **id,int *flg,int *size, char*** dome
 		char* domen = (char*)calloc(KB, sizeof(char));
 		if (domen == NULL)
 		{
+			for (int i = 0; i < size; i++)
+				free(*(*domen_mas + i));
+			free(*domen_mas);
+
 			return ERROR;
 		}
 
@@ -426,9 +430,6 @@ int findAllDomensForIdMenu()
 			if (findOneDomen(file, str, &id, &flg, &size, &domen_mas) == 1)
 			{
 				free(id);
-				for (int i = 0; i < size; i++)
-					free(*(domen_mas + i));
-				free(domen_mas);
 				fclose(file);
 				free(str);
 
@@ -455,7 +456,7 @@ int findAllDomensForIdMenu()
 }
 
 
-int checkForValidation(char* id)
+int checkForValidation(const char* id)
 {
 	int cheker_point = 0;
 	int cheker_two_points = 0;
@@ -546,8 +547,8 @@ int chekerIPv4(const char* id)
 
 		num = 0;
 
-		for (int i = (int)strnlen_s(storer, 4)-1; i >=0; i--)
-			*(storer + i) = '\0';
+		for (int z = (int)strnlen_s(storer, 4)-1; z >=0; z--)
+			*(storer + z) = '\0';
 	}
 
 	free(storer);

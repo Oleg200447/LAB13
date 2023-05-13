@@ -18,7 +18,7 @@ int addRecordInFileMenu();
 
 int findAllDomensForIdMenu();
 
-int checkForValidation(char* id);
+int checkForValidation(const char* id);
 
 int levelTen(int degree);
 
