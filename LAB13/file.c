@@ -45,19 +45,20 @@ void findNewDomen(char** domen,const char* str)
 		char* domen_storer = (char*)realloc(*domen, (strnlen_s(str, KB) - j) * sizeof(char));
 		if (domen_storer != NULL)
 			*domen = domen_storer;
-		if (domen != NULL)
+	
+		while (*(str + j) != '\0')
 		{
-			while (*(str + j) != '\0')
+			if ((*domen + i) != NULL && (str + j) != NULL)
 			{
 				*(*domen + i) = *(str + j);
 
 				i++;
 				j++;
 			}
-
-
-			*(*domen + (i - 1)) = '\0';
 		}
+
+		if((*domen + (i - 1))!=NULL)
+		*(*domen + (i - 1)) = '\0';
 	}
 }
 
