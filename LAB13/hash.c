@@ -7,10 +7,12 @@
 #define HASH_SIZE 20
 #define INT_A_SYMB 65
 
-long long findSumSymbols(char* str)
+#define KB 1024
+
+long long findSumSymbols(const char* str)
 {
 	long long value_for_key = 0;
-	for (int i = 0; i < strlen(str); i++)
+	for (int i = 0; i < strnlen_s(str,KB); i++)
 	{
 		value_for_key += (long long)(*(str + i));
 	}
@@ -18,7 +20,7 @@ long long findSumSymbols(char* str)
 	return value_for_key;
 }
 
-char* makeHash(char* str)
+char* makeHash(const char* str)
 {
 	if (str == NULL)
 	{

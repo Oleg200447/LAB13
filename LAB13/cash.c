@@ -6,7 +6,7 @@
 #include"hash.h"
 #include"file.h"
 
-#define MAX_CASH_SIZE 2
+#define MAX_CASH_SIZE 1
 #define KB 1024
 
 #define MEMORY_MISTAKE -1
@@ -17,7 +17,7 @@
 #define HACHE_SIZE 19
 
 #define FIRST_TASK 1
-#define LAST_TASK 4
+#define LAST_TASK 5
 
 #define SUCCESSFUL_WORK 0
 #define ERROR 1
@@ -37,7 +37,7 @@ void menuCorrect(int* task)
 	}
 }
 
-int push(cash** head,cash**tail, char* id,char *domen) 
+int push(cash** head,cash**tail, char* id) 
 {
 	cash* storer = malloc(sizeof(cash));
 	if (storer == NULL)
@@ -65,7 +65,7 @@ int push(cash** head,cash**tail, char* id,char *domen)
 
 int addElementInCash(hash** mas_hash, cash** head,cash **tail,unsigned int size,char *domen,char* id)
 {
-	unsigned int new_size = size + 1;
+	unsigned int new_size = (size + 1);
 
 	hash* storer = (hash*)realloc(*mas_hash, new_size * sizeof(hash));
 	if (storer == NULL)
@@ -74,16 +74,16 @@ int addElementInCash(hash** mas_hash, cash** head,cash **tail,unsigned int size,
 		*mas_hash = storer;
 
 	(*mas_hash)[new_size - 1].key = makeHash(domen);
-	if (push(head, tail, id, domen) == MEMORY_MISTAKE)
+	if (push(head, tail, id) == MEMORY_MISTAKE)
 		return MEMORY_MISTAKE_ADD;
 	(*mas_hash)[new_size - 1].id = *head;
 	
 	return new_size;
 }
 
-unsigned int chechCashForId(char* domen, hash* mas_hash,unsigned int size)
+unsigned int chechCashForId(char* domen,const hash* mas_hash,unsigned int size)
 {
-	char* key = (char*)calloc(KB, sizeof(char));
+	const char* key = (char*)calloc(KB, sizeof(char));
 	if (key == NULL)
 		return MEMORY_MISTAKE;
 	key = makeHash(domen);
@@ -91,7 +91,9 @@ unsigned int chechCashForId(char* domen, hash* mas_hash,unsigned int size)
 	for (int i = 0; i <(int) size; i++)
 	{
 		if (strncmp(key, (*(mas_hash + i)).key, HACHE_SIZE) == 0)
+		{
 			return i + 1;
+		}
 	}
 	
 	return 0;
@@ -102,7 +104,7 @@ void changePlaceOfElement(unsigned int place_in_masive, hash** mas_hash, cash** 
 	if (place_in_masive == size)
 		return;
 
-	hash storer_hash = *(*mas_hash + place_in_masive - 1);
+	hash storer_hash = *(*mas_hash + (place_in_masive - 1));
 	cash* storer_cash = storer_hash.id;
 
 	for (int i = place_in_masive - 1; i <(int) size - 1; i++)
@@ -131,9 +133,19 @@ void changePlaceOfElement(unsigned int place_in_masive, hash** mas_hash, cash** 
 	}
 }
 
-int delateElementFromCache(hash** mas_hash, cash** tail, unsigned int size)
+int delateElementFromCache(hash** mas_hash, cash** tail, int size)
 {
 	int new_size = size - 1;
+
+	if (new_size == 0)
+	{
+		cash* storer_cach = *tail;
+		(*tail) = (*tail)->next;
+		free(storer_cach->id);
+		free(storer_cach);
+		return new_size;
+	}
+		
 
 	for (int i = 0; i < new_size; i++)
 	{
@@ -152,10 +164,10 @@ int delateElementFromCache(hash** mas_hash, cash** tail, unsigned int size)
 	free(storer_cach->id);
 	free(storer_cach);
 
-	return size - 1;
+	return new_size;
 }
 
-void freeCash(cash** head, hash** mas,int size)
+void freeCash(hash** mas,int size)
 {
 	for (int i = 0; i < size; i++)
 	{
@@ -174,7 +186,7 @@ void checkUserAnswer(char* symbol)
 	}
 }
 
-int findIdMenu(cash **head,cash**tail,hash **mas_hash,unsigned int *size)
+int findIdMenu(cash **head,cash**tail,hash **mas_hash,int *size)
 {
 	FILE* file;
 	errno_t err_file = fopen_s(&file, "asd.txt", "r+");
@@ -216,6 +228,7 @@ int findIdMenu(cash **head,cash**tail,hash **mas_hash,unsigned int *size)
 		{
 			free(domen);
 			fclose(file);
+			free(id);
 
 			return ERROR;
 		}
@@ -224,6 +237,7 @@ int findIdMenu(cash **head,cash**tail,hash **mas_hash,unsigned int *size)
 		{
 			free(domen);
 			fclose(file);
+			free(id);
 
 			printf("Not enough info in file\n");
 
@@ -239,6 +253,7 @@ int findIdMenu(cash **head,cash**tail,hash **mas_hash,unsigned int *size)
 		{
 			free(domen);
 			fclose(file);
+			free(id);
 
 			return ERROR;
 		}
@@ -252,6 +267,7 @@ int findIdMenu(cash **head,cash**tail,hash **mas_hash,unsigned int *size)
 			{
 				free(domen);
 				fclose(file);
+				free(id);
 
 				return ERROR;
 			}
@@ -261,6 +277,7 @@ int findIdMenu(cash **head,cash**tail,hash **mas_hash,unsigned int *size)
 			{
 				free(domen);
 				fclose(file);
+				free(id);
 
 				return ERROR;
 			}
@@ -276,4 +293,13 @@ int findIdMenu(cash **head,cash**tail,hash **mas_hash,unsigned int *size)
 	free(domen);
 
 	return SUCCESSFUL_WORK;
+}
+
+void watchCash(cash* head)
+{
+	while (head != NULL)
+	{
+		printf("%s", head->id);
+		head = head->prev;
+	}
 }

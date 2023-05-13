@@ -35,10 +35,10 @@ void checkForCorrectType(int* type)
 	}
 }
 
-void findNewDomen(char** domen, char* str)
+void findNewDomen(char** domen,const char* str)
 {
 	int i = 0;
-	int j = (int)strlen(*domen) + (int)strlen(SECOND_TYPE)+2;
+	int j = (int)strnlen_s(*domen,KB) + (int)strnlen_s(SECOND_TYPE,KB)+2;
 
 	while (*(str + j) != '\0')
 	{
@@ -47,33 +47,32 @@ void findNewDomen(char** domen, char* str)
 		j++;
 	}
 
-	*(*domen + i-1) = '\0';
+	*(*domen + (i-1)) = '\0';
 }
 
-int defineStrType(char* str, unsigned int domen_size)
+int defineStrType(const char* str, unsigned int domen_size)
 {
 	int first_type_cheker = 0;
 	int second_type_cheker = 0;
 
-	for (int i = domen_size + 1, j = 0; j < (int)strlen(SECOND_TYPE); j++, i++)
+	for (int i = domen_size + 1, j = 0; j < (int)strnlen_s(SECOND_TYPE,KB); j++, i++)
 	{
-		if (j < (int)strlen(FIRST_TYPE))
-			if (*(str + i) == FIRST_TYPE[j])
+		if ((j < (int)strnlen_s(FIRST_TYPE,KB)) && *(str + i) == FIRST_TYPE[j])
 				first_type_cheker++;
 
 		if (*(str + i) == SECOND_TYPE[j])
 			second_type_cheker++;
 	}
 
-	if (first_type_cheker == (int)strlen(FIRST_TYPE))
+	if (first_type_cheker == (int)strnlen_s(FIRST_TYPE,KB))
 		return FIRST_TYPE_FIND;
-	else if (second_type_cheker == (int)strlen(SECOND_TYPE))
+	else if (second_type_cheker == (int)strnlen_s(SECOND_TYPE,KB))
 		return SECOND_TYPE_FIND;
 	else
 		return NO_TYPE;
 }
 
-int findNeededString(char* domen, char** str,FILE* file)
+int findNeededString(const char* domen, char** str,FILE* file)
 {
 	rewind(file);
 
@@ -81,13 +80,13 @@ int findNeededString(char* domen, char** str,FILE* file)
 	{
 		fgets(*str, KB, file);
 
-		if (strncmp(*str, domen, (int)strlen(domen)) == 0)
+		if (strncmp(*str, domen, (int)strnlen_s(domen,KB)) == 0)
 			return STR_FINDED;
 	}
 	return NO_STR;
 }
 
-int findId(FILE* file,char *domen,char **id)
+int findId(FILE* file,const char *domen,char **id)
 {
 	char* str = (char*)calloc(KB, sizeof(char));
 	if (str == NULL)
@@ -117,12 +116,12 @@ int findId(FILE* file,char *domen,char **id)
 			return NEED_ADD;
 		}
 
-		type = defineStrType(str, (int)strlen(domen_storer));
+		type = defineStrType(str, (int)strnlen_s(domen_storer,KB));
 
 		if (type == FIRST_TYPE_FIND)
 		{
 			int i = 0;
-			int j = (int)strlen(domen_storer) + (int)strlen(FIRST_TYPE)+2;
+			int j = (int)strnlen_s(domen_storer,KB) + (int)strnlen_s(FIRST_TYPE,KB)+2;
 
 			while (*(str + j) != '\0')
 			{
@@ -152,7 +151,7 @@ int findId(FILE* file,char *domen,char **id)
 	return SUCCESSFUL_WORK;
 }
 
-int checkForIdInFile(FILE* file,char* id)
+int checkForIdInFile(FILE* file,const char* id)
 {
 	rewind(file);
 
@@ -172,9 +171,8 @@ int checkForIdInFile(FILE* file,char* id)
 		{
 			i++;
 		}	
-		i += (int)strlen(FIRST_TYPE)+2;
+		i += (int)strnlen_s(FIRST_TYPE,KB)+2;
 
-		int size_id_str = (int)strlen(str)-i-1;
 		int counter = 0;
 
 		while (*(str + i) != '\n')
@@ -187,7 +185,7 @@ int checkForIdInFile(FILE* file,char* id)
 			else
 				break;
 		}
-		if (counter == strlen(id))
+		if (counter == strnlen_s(id,KB))
 		{
 			free(str);
 			return ERROR;
@@ -197,7 +195,7 @@ int checkForIdInFile(FILE* file,char* id)
 	return SUCCESSFUL_WORK;
 }
 
-int checkForDomenFile(FILE* file, char* domen)
+int checkForDomenFile(FILE* file,const char* domen)
 {
 	rewind(file);
 
@@ -211,7 +209,7 @@ int checkForDomenFile(FILE* file, char* domen)
 	{
 		fgets(str, KB, file);
 
-		if (strncmp(domen, str, strlen(domen)) == 0)
+		if (strncmp(domen, str, strnlen_s(domen,KB)) == 0)
 		{
 			free(str);
 			return 1;
@@ -309,6 +307,61 @@ int addRecordInFileMenu()
 	return 0;
 }
 
+
+int findOneDomen(FILE *file,char *str,char **id,int *flg,int *size, char*** domen_mas)
+{
+	fgets(str, KB, file);
+
+	int i = (int)strnlen_s(str, KB);
+
+	while (*(str + i) != ' ')
+		i--;
+	i++;
+
+	int counter = 0;
+
+	while (*(str + i) != '\0' && *(str + i) != '\n' && (*(*id + counter) == *(str + i)))
+	{
+		i++;
+		counter++;
+	}
+
+	int k = i;
+	i = 0;
+
+	if ((counter == (int)strnlen_s(*id, KB)) && (*(str + k) == '\0' || *(str + k) == '\n'))
+	{
+		*flg = 1;
+		(*size)++;
+
+		char* domen = (char*)calloc(KB, sizeof(char));
+		if (domen == NULL)
+		{
+			return ERROR;
+		}
+
+		while (*(str + i) != ' ')
+		{
+			*(domen + i) = *(str + i);
+			i++;
+		}
+
+		*(domen + i) = '\0';
+
+		*id = domen;
+
+		if (*size != 1)
+		{
+			char** storer_mas = (char**)realloc(*domen_mas, *size * sizeof(char*));
+			if (storer_mas != NULL)
+				*domen_mas = storer_mas;
+		}
+		*(*domen_mas + (*size - 1)) = domen;
+	}
+
+	return SUCCESSFUL_WORK;
+}
+
 int findAllDomensForIdMenu()
 {
 	FILE* file;
@@ -366,58 +419,16 @@ int findAllDomensForIdMenu()
 
 		while (!feof(file))
 		{
-
-			fgets(str, KB, file);
-
-			int i = (int)strlen(str);
-
-			while (*(str + i) != ' ')
-				i--;
-			i++;
-
-			int counter=0;
-
-			while (*(str + i) != '\0' && *(str + i) != '\n' &&(* (id + counter) == *(str + i)))
+			if (findOneDomen(file, str, &id, &flg, &size, &domen_mas) == 1)
 			{
-				i++;
-				counter++;
-			}
-			
-			int k = i;
-			i = 0;
+				free(id);
+				for (int i = 0; i < size; i++)
+					free(*(domen_mas + i));
+				free(domen_mas);
+				fclose(file);
+				free(str);
 
-			if ((counter ==(int) strlen(id)) && (*(str+k)=='\0' || *(str + k) == '\n'))
-			{
-				flg = 1;
-				size++;
-
-				char* domen = (char*)calloc(KB, sizeof(char));
-				if (domen == NULL)
-				{
-					free(id);
-					fclose(file);
-					free(str);
-
-					return ERROR;
-				}
-
-				while (*(str + i) != ' ')
-				{
-					*(domen + i) = *(str + i);
-					i++;
-				}
-
-				*(domen + i) = '\0';
-
-				id = domen;
-
-				if (size != 1)
-				{
-					char** storer_mas = (char**)realloc(domen_mas, size * sizeof(char*));
-					if (storer_mas != NULL)
-						domen_mas = storer_mas;
-				}
-				*(domen_mas + size - 1) = domen;
+				return ERROR;
 			}
 		}
 
@@ -429,7 +440,11 @@ int findAllDomensForIdMenu()
 
 	for (int i = 0; i < size; i++)
 		free(*(domen_mas + i));
-	
+
+	free(domen_mas);
+
+	free(str);
+
 	fclose(file);
 
 	return SUCCESSFUL_WORK;
@@ -441,9 +456,9 @@ int checkForValidation(char* id)
 	int cheker_point = 0;
 	int cheker_two_points = 0;
 
-	for (int i = 0; i < strlen(id); i++)
+	for (int i = 1; i < strnlen_s(id,KB); i++)
 	{
-		if (*(id + i) == '.' && (*(id + i - 1) <= '9' && *(id + i - 1) >= '1') && (*(id + i + 1) <= '9' && *(id + i + 1) >= '1'))
+		if (*(id + i) == '.' && (*(id + i - 1) <= '9' && *(id + i - 1) >= '0') && (*(id + i + 1) <= '9' && *(id + i + 1) >= '0'))
 		{
 			cheker_point++;
 		}		
@@ -454,9 +469,9 @@ int checkForValidation(char* id)
 		return 0;
 	}
 
-	for (int i = 0; i < strlen(id); i++)
+	for (int i = 1; i < strnlen_s(id,KB); i++)
 	{
-		if (*(id + i) == ':' && ((* (id + i - 1) <= '9' && *(id + i - 1) >= '1') || (* (id + i - 1) <= 'Z' && *(id + i - 1) >= 'A') || (*(id + i - 1) <= 'z' && *(id + i - 1) >= 'a')) && ((*(id + i + 1) <= '9' && *(id + i + 1) >= '1') || (*(id + i + 1) <= 'Z' && *(id + i + 1) >= 'A') || (*(id + i + 1) <= 'z' && *(id + i + 1) >= 'a')))
+		if (*(id + i) == ':' && ((* (id + i - 1) <= '9' && *(id + i - 1) >= '0') || (* (id + i - 1) <= 'Z' && *(id + i - 1) >= 'A') || (*(id + i - 1) <= 'z' && *(id + i - 1) >= 'a')) && ((*(id + i + 1) <= '9' && *(id + i + 1) >= '0') || (*(id + i + 1) <= 'Z' && *(id + i + 1) >= 'A') || (*(id + i + 1) <= 'z' && *(id + i + 1) >= 'a')))
 		{
 			cheker_two_points++;
 		}
@@ -480,23 +495,24 @@ int levelTen(int degree)
 	return num;
 }
 
-int chekerIPv4(char* id)
+int chekerIPv4(const char* id)
 {
-	for (int i = 0; i < strlen(id); i++)
+	for (int i = 0; i < strnlen_s(id,KB); i++)
 	{
-		if (*(id + i) != '.' && !(*(id + i) <= '9' && *(id + i) >= '1'))
+		if (*(id + i) != '.' && !(*(id + i) <= '9' && *(id + i) >= '0'))
 			return 1;
 	}
 
 	int num = 0;
 
 	int k = 0;
-	for (int i = 0; i < 4; i++)
-	{
-		char* storer = (char*)calloc(4, sizeof(char));
+
+	char* storer = (char*)calloc(4, sizeof(char));
 		if (storer == NULL)
 			return 1;
 
+	for (int i = 0; i < 4; i++)
+	{
 		int j = 0;
 
 		while (*(id + k) != '.' && *(id + k) != '\0')
@@ -507,34 +523,38 @@ int chekerIPv4(char* id)
 		}
 		k++;
 
-		for (int p = (int)strlen(storer),z=0; p > 0; p--,z++)
+		for (int p = (int)strnlen_s(storer,KB),z=0; p > 0; p--,z++)
 		{
-			num += (int)(*(storer + p-1) - (int)'0')*levelTen(z);
+			num +=(*(storer + (p-1)) - '0') * levelTen(z);
 		}
 
-		if (*(storer) == '0' && strlen(storer) == 1)
+		if (*storer == '0' && strnlen_s(storer,KB) == 1)
 			return 1;
 
 		if (!(num >= 0 && num <= 255))
 			return 1;
 
 		num = 0;
+
+		for (int i = strnlen_s(storer, 4)-1; i >=0; i--)
+			*(storer + i) = '\0';
 	}
 
+	free(storer);
 	
 	return 0;
 }
 
-int chekerIPv6(char* id)
+int chekerIPv6(const char* id)
 {
-	for (int i = 0; i < strlen(id); i++)
+	for (int i = 0; i < strnlen_s(id,KB); i++)
 	{
-		if (*(id + i) != ':' && !(*(id + i) <= '9' && *(id + i) >= '1') && !(*(id + i) <= 'Z' && *(id + i) >= 'A') && !(*(id + i) <= 'z' && *(id + i) >= 'a'))
+		if (*(id + i) != ':' && !(*(id + i) <= '9' && *(id + i) >= '0') && !(*(id + i) <= 'Z' && *(id + i) >= 'A') && !(*(id + i) <= 'z' && *(id + i) >= 'a'))
 			return 1;
 	}
 
 	int cheker = 0;
-	for (int i = 0; i < strlen(id); i++)
+	for (int i = 0; i < strnlen_s(id,KB); i++)
 	{
 		if (*(id + i) != ':')
 			cheker++;

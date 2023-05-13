@@ -1,6 +1,6 @@
 #pragma once
 
-long long findSumSymbols(char* str);
+long long findSumSymbols(const char* str);
 
-char* makeHash(char* str);
+char* makeHash(const char* str);
 
