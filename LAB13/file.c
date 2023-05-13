@@ -42,7 +42,7 @@ void findNewDomen(char** domen,const char* str)
 		int i = 0;
 		int j = (int)strnlen_s(*domen, KB) + (int)strnlen_s(SECOND_TYPE, KB) + 2;
 
-		char* domen_storer = (char*)realloc(*domen, (strnlen_s(str, KB) - j) * sizeof(char));
+		char* domen_storer = (char*)realloc(*domen, /*(strnlen_s(str, KB) - j)*/KB * sizeof(char));
 		if (domen_storer != NULL)
 			*domen = domen_storer;
 	
