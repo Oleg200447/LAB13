@@ -135,7 +135,7 @@ int findId(FILE* file,const char *domen,char **id)
 			int i = 0;
 			int j = (int)strnlen_s(domen_storer,KB) + (int)strnlen_s(FIRST_TYPE,KB)+2;
 
-			if (j>strnlen_s(str,KB)-1)
+			if (j>strnlen_s(str,KB)-1 || j<0)
 				return ERROR;
 
 			while (*(str + j) != '\0')
