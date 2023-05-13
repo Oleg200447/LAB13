@@ -44,19 +44,16 @@ void findNewDomen(char** domen,const char* str)
 	if (domen_storer != NULL)
 		*domen = domen_storer;
 
-	if (j > strnlen(str, KB))
-		return;
-
 	while (*(str + j) != '\0')
 	{
-		if(*(*domen + i)!=NULL)
+		if(str!=NULL)
 		*(*domen + i) = *(str + j);
 
 		i++;
 		j++;
 	}
 
-	if(*(*domen + (i - 1))!=NULL)
+	
 	*(*domen + (i - 1)) = '\0';
 }
 
@@ -347,7 +344,7 @@ int findOneDomen(FILE *file,char *str,char **id,int *flg,int *size, char*** dome
 		char* domen = (char*)calloc(KB, sizeof(char));
 		if (domen == NULL)
 		{
-			for (int i = 0; i < size; i++)
+			for (int z = 0; z < *size; z++)
 				free(*(*domen_mas + i));
 			free(*domen_mas);
 

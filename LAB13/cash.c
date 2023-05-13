@@ -94,7 +94,7 @@ unsigned int chechCashForId(const char* domen,const hash* mas_hash,unsigned int 
 
 	for (int i = 0; i <(int) size; i++)
 	{
-		if (strncmp(key, (*(mas_hash + i)).key, HACHE_SIZE) == 0)
+		if ((*(mas_hash + i)).key!=NULL && strncmp(key, (*(mas_hash + i)).key, HACHE_SIZE) == 0)
 		{
 			free(key);
 			return i + 1;
