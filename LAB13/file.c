@@ -46,11 +46,13 @@ void findNewDomen(char** domen,const char* str)
 
 	while (*(str + j) != '\0')
 	{
-		if(str!=NULL)
-		*(*domen + i) = *(str + j);
+		if (str != NULL)
+		{
+			*(*domen + i) = *(str + j);
 
-		i++;
-		j++;
+			i++;
+			j++;
+		}
 	}
 
 	
@@ -367,6 +369,7 @@ int findOneDomen(FILE *file,char *str,char **id,int *flg,int *size, char*** dome
 			if (storer_mas != NULL)
 				*domen_mas = storer_mas;
 		}
+
 		*(*domen_mas + (*size - 1)) = domen;
 	}
 
@@ -424,6 +427,8 @@ int findAllDomensForIdMenu()
 		return ERROR;
 	}
 
+	char* id_storer = id;
+
 	while (flg)
 	{
 		flg = 0;
@@ -435,6 +440,7 @@ int findAllDomensForIdMenu()
 				free(id);
 				fclose(file);
 				free(str);
+				free(id_storer);
 
 				return ERROR;
 			}
@@ -452,6 +458,8 @@ int findAllDomensForIdMenu()
 	free(domen_mas);
 
 	free(str);
+
+	free(id_storer);
 
 	fclose(file);
 
