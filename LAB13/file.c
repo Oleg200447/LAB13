@@ -57,8 +57,8 @@ void findNewDomen(char** domen,const char* str)
 			}
 		}
 
-		if((*domen + (i - 1))!=NULL)
-		*(*domen + (i - 1)) = '\0';
+		if ((*domen + (i - 1))!=NULL && i>=1)
+			*(*domen + (i - 1)) = '\0';
 	}
 }
 
