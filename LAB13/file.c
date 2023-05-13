@@ -102,7 +102,7 @@ int findId(FILE* file,char *domen,char **id)
 		return MEMORY_ERROR;
 	}
 
-	strcpy(domen_storer, domen);
+	strcpy_s(domen_storer,KB, domen);
 
 	int flg = 1;
 	int type = 0;
@@ -291,14 +291,14 @@ int addRecordInFileMenu()
 		return SUCCESSFUL_WORK;
 	}
 
-	strcat(domen, SPACE);
+	strcat_s(domen,KB,SPACE);
 	if(choise==1)
-	strcat(domen, FIRST_TYPE);
+		strcat_s(domen, KB, FIRST_TYPE);
 	else
-		strcat(domen, SECOND_TYPE);
-	strcat(domen, SPACE);
-	strcat(domen, id);
-	strcat(domen, TRANSFER);
+		strcat_s(domen, KB, SECOND_TYPE);
+	strcat_s(domen, KB, SPACE);
+	strcat_s(domen, KB, id);
+	strcat_s(domen, KB, TRANSFER);
 
 	fputs(domen, file);
 
@@ -339,6 +339,15 @@ int findAllDomensForIdMenu()
 
 	printf("Input id:");
 	scanf_s("%s", id, KB);
+
+	if (checkForValidation(id) == 1)
+	{
+		printf("Format id not correct.\n");
+		free(domen_mas);
+		free(id);
+		fclose(file);
+		return SUCCESSFUL_WORK;
+	}
 
 	int flg = 1;
 
@@ -475,7 +484,7 @@ int chekerIPv4(char* id)
 {
 	for (int i = 0; i < strlen(id); i++)
 	{
-		if (*(id + i) != '.' || !(*(id + i) <= '9' && *(id + i) >= '1'))
+		if (*(id + i) != '.' && !(*(id + i) <= '9' && *(id + i) >= '1'))
 			return 1;
 	}
 
@@ -490,7 +499,7 @@ int chekerIPv4(char* id)
 
 		int j = 0;
 
-		while (*(id + k) != '.')
+		while (*(id + k) != '.' && *(id + k) != '\0')
 		{
 			*(storer + j) = *(id + k);
 			j++;
@@ -498,9 +507,9 @@ int chekerIPv4(char* id)
 		}
 		k++;
 
-		for (int p = (int)strlen(storer),z=0; p >= 0; p--,z++)
+		for (int p = (int)strlen(storer),z=0; p > 0; p--,z++)
 		{
-			num += (int)(*(storer + p) - (int)'0')*levelTen(z);
+			num += (int)(*(storer + p-1) - (int)'0')*levelTen(z);
 		}
 
 		if (*(storer) == '0' && strlen(storer) == 1)
@@ -508,6 +517,8 @@ int chekerIPv4(char* id)
 
 		if (!(num >= 0 && num <= 255))
 			return 1;
+
+		num = 0;
 	}
 
 	
