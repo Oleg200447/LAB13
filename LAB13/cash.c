@@ -104,7 +104,11 @@ unsigned int chechCashForId(const char* domen,const hash* mas_hash,unsigned int 
 
 		free(key);
 	}
-	return 0;
+	else
+	{
+		free(key);
+		return MEMORY_MISTAKE;
+	}
 }
 
 void changePlaceOfElement(unsigned int place_in_masive, hash** mas_hash, cash** head, cash** tail, unsigned int size)
