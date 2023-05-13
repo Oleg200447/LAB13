@@ -85,7 +85,10 @@ unsigned int chechCashForId(const char* domen,const hash* mas_hash,unsigned int 
 {
 	char* key = (char*)calloc(KB, sizeof(char));
 	if (key == NULL)
+	{
+		free(key);
 		return MEMORY_MISTAKE;
+	}
 
 	key = makeHash(domen);
 
