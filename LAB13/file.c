@@ -40,6 +40,10 @@ void findNewDomen(char** domen,const char* str)
 	int i = 0;
 	int j = (int)strnlen_s(*domen,KB) + (int)strnlen_s(SECOND_TYPE,KB)+2;
 
+	char* domen_storer = (char*)realloc(*domen, (strnlen_s(str,KB)-j) * sizeof(char));
+	if (domen_storer != NULL)
+		*domen = domen_storer;
+
 	while (*(str + j) != '\0')
 	{
 		*(*domen + i) = *(str + j);
@@ -47,7 +51,7 @@ void findNewDomen(char** domen,const char* str)
 		j++;
 	}
 
-	*(*domen + (i-1)) = '\0';
+	*(*domen + (i - 1)) = '\0';
 }
 
 int defineStrType(const char* str, unsigned int domen_size)
@@ -528,15 +532,21 @@ int chekerIPv4(const char* id)
 			num +=(*(storer + (p-1)) - '0') * levelTen(z);
 		}
 
-		if (*storer == '0' && strnlen_s(storer,KB) == 1)
+		if (*storer == '0' && strnlen_s(storer, KB) == 1)
+		{
+			free(storer);
 			return 1;
+		}
 
 		if (!(num >= 0 && num <= 255))
+		{
+			free(storer);
 			return 1;
+		}
 
 		num = 0;
 
-		for (int i = strnlen_s(storer, 4)-1; i >=0; i--)
+		for (int i = (int)strnlen_s(storer, 4)-1; i >=0; i--)
 			*(storer + i) = '\0';
 	}
 

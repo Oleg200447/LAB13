@@ -86,22 +86,25 @@ unsigned int chechCashForId(char* domen,const hash* mas_hash,unsigned int size)
 	const char* key = (char*)calloc(KB, sizeof(char));
 	if (key == NULL)
 		return MEMORY_MISTAKE;
+
 	key = makeHash(domen);
 
 	for (int i = 0; i <(int) size; i++)
 	{
 		if (strncmp(key, (*(mas_hash + i)).key, HACHE_SIZE) == 0)
 		{
+			free(key);
 			return i + 1;
 		}
 	}
-	
+
+	free(key);
 	return 0;
 }
 
 void changePlaceOfElement(unsigned int place_in_masive, hash** mas_hash, cash** head, cash** tail, unsigned int size)
 {
-	if (place_in_masive == size)
+	if (place_in_masive == size || size==0)
 		return;
 
 	hash storer_hash = *(*mas_hash + (place_in_masive - 1));
@@ -285,6 +288,7 @@ int findIdMenu(cash **head,cash**tail,hash **mas_hash,int *size)
 		else
 		{
 			changePlaceOfElement(place_in_masive, mas_hash, head, tail, *size);
+			free(id);
 		}
 	}
 	printf("id:%s", (*(*mas_hash + *size - 1)).id->id);

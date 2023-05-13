@@ -38,9 +38,9 @@ char* makeHash(const char* str)
 	for (int i = 1; i < HASH_SIZE; i++)
 	{
 		if (i % 5 != 0)
-			*(hash_key + i - 1) = (char)(INT_A_SYMB + (int)(value_for_key % (i + 1)));
+			hash_key[i-1] = (char)(INT_A_SYMB + (int)(value_for_key % (i + 1)));
 		else
-			*(hash_key + i - 1) = '-';
+			hash_key[i - 1] = '-';
 	}
 
 	return hash_key;
