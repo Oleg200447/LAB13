@@ -439,7 +439,7 @@ int findAllDomensForIdMenu()
 		{
 			if (findOneDomen(file, str, &id, &flg, &size, &domen_mas) == 1)
 			{
-				free(id);
+				free(id_storer);
 				fclose(file);
 				free(str);
 
