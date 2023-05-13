@@ -37,26 +37,28 @@ void checkForCorrectType(int* type)
 
 void findNewDomen(char** domen,const char* str)
 {
-	int i = 0;
-	int j = (int)strnlen_s(*domen,KB) + (int)strnlen_s(SECOND_TYPE,KB)+2;
-
-	char* domen_storer = (char*)realloc(*domen, (strnlen_s(str,KB)-j) * sizeof(char));
-	if (domen_storer != NULL)
-		*domen = domen_storer;
-
-	while (*(str + j) != '\0')
+	if (str != NULL)
 	{
-		if (str != NULL)
-		{
-			*(*domen + i) = *(str + j);
+		int i = 0;
+		int j = (int)strnlen_s(*domen, KB) + (int)strnlen_s(SECOND_TYPE, KB) + 2;
 
-			i++;
-			j++;
+		char* domen_storer = (char*)realloc(*domen, (strnlen_s(str, KB) - j) * sizeof(char));
+		if (domen_storer != NULL)
+			*domen = domen_storer;
+		if (domen != NULL)
+		{
+			while (*(str + j) != '\0')
+			{
+				*(*domen + i) = *(str + j);
+
+				i++;
+				j++;
+			}
+
+
+			*(*domen + (i - 1)) = '\0';
 		}
 	}
-
-	
-	*(*domen + (i - 1)) = '\0';
 }
 
 int defineStrType(const char* str, unsigned int domen_size)
@@ -347,7 +349,7 @@ int findOneDomen(FILE *file,char *str,char **id,int *flg,int *size, char*** dome
 		if (domen == NULL)
 		{
 			for (int z = 0; z < *size; z++)
-				free(*(*domen_mas + i));
+				free(*(*domen_mas + z));
 			free(*domen_mas);
 
 			return ERROR;
@@ -440,7 +442,6 @@ int findAllDomensForIdMenu()
 				free(id);
 				fclose(file);
 				free(str);
-				free(id_storer);
 
 				return ERROR;
 			}

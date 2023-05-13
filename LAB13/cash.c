@@ -83,7 +83,7 @@ int addElementInCash(hash** mas_hash, cash** head,cash **tail,unsigned int size,
 
 unsigned int chechCashForId(const char* domen,const hash* mas_hash,unsigned int size)
 {
-	const char* key = (char*)calloc(KB, sizeof(char));
+	char* key = (char*)calloc(KB, sizeof(char));
 	if (key == NULL)
 		return MEMORY_MISTAKE;
 
