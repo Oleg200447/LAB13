@@ -135,6 +135,9 @@ int findId(FILE* file,const char *domen,char **id)
 			int i = 0;
 			int j = (int)strnlen_s(domen_storer,KB) + (int)strnlen_s(FIRST_TYPE,KB)+2;
 
+			if (j>strnlen_s(str,KB)-1)
+				return ERROR;
+
 			while (*(str + j) != '\0')
 			{
 				*(*id + i) = *(str + j);
@@ -235,7 +238,7 @@ int checkForDomenFile(FILE* file,const char* domen)
 int addRecordInFileMenu()
 {
 	FILE* file;
-	errno_t err_file = fopen_s(&file, "asd.txt", "a+");
+	errno_t err_file = fopen_s(&file, "database.txt", "a+");
 	if (err_file != 0)
 	{
 		printf("Cant open file");
@@ -382,7 +385,7 @@ int findOneDomen(FILE *file,char *str,char **id,int *flg,int *size, char*** dome
 int findAllDomensForIdMenu()
 {
 	FILE* file;
-	errno_t err_file = fopen_s(&file, "asd.txt", "r+");
+	errno_t err_file = fopen_s(&file, "database.txt", "r+");
 	if (err_file != SUCCESSFUL_WORK)
 	{
 		printf("Cant open file");

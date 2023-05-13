@@ -91,20 +91,19 @@ unsigned int chechCashForId(const char* domen,const hash* mas_hash,unsigned int 
 	}
 
 	key = makeHash(domen);
-
-	if (key == NULL)
-		return 0;
-
-	for (int i = 0; i <(int) size; i++)
+	if (key != NULL)
 	{
-		if ((*(mas_hash + i)).key!=NULL && strncmp(key, (*(mas_hash + i)).key, HACHE_SIZE) == 0)
+		for (int i = 0; i < (int)size; i++)
 		{
-			free(key);
-			return i + 1;
+			if ((*(mas_hash + i)).key != NULL && strncmp(key, (*(mas_hash + i)).key, HACHE_SIZE) == 0)
+			{
+				free(key);
+				return i + 1;
+			}
 		}
-	}
 
-	free(key);
+		free(key);
+	}
 	return 0;
 }
 
@@ -198,7 +197,7 @@ void checkUserAnswer(char* symbol)
 int findIdMenu(cash **head,cash**tail,hash **mas_hash,int *size)
 {
 	FILE* file;
-	errno_t err_file = fopen_s(&file, "asd.txt", "r+");
+	errno_t err_file = fopen_s(&file, "database.txt", "r+");
 	if (err_file != SUCCESSFUL_WORK)
 	{
 		printf("Cant open file");
