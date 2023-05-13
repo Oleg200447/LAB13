@@ -83,7 +83,7 @@ int addElementInCash(hash** mas_hash, cash** head,cash **tail,unsigned int size,
 
 unsigned int chechCashForId(const char* domen,const hash* mas_hash,unsigned int size)
 {
-	char* key = (char*)calloc(KB, sizeof(char));
+	char* key = (char*)calloc(HACHE_SIZE+1, sizeof(char));
 	if (key == NULL)
 	{
 		free(key);
