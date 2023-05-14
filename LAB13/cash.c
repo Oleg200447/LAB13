@@ -6,7 +6,7 @@
 #include"hash.h"
 #include"file.h"
 
-#define MAX_CASH_SIZE 1
+#define MAX_CASH_SIZE 4
 #define KB 1024
 
 #define MEMORY_MISTAKE -1
@@ -89,7 +89,7 @@ unsigned int chechCashForId(const char* domen,const hash* mas_hash,unsigned int 
 		free(key);
 		return MEMORY_MISTAKE;
 	}
-
+	char* key_storer = key;
 	key = makeHash(domen);
 	if (key != NULL)
 	{
@@ -98,17 +98,19 @@ unsigned int chechCashForId(const char* domen,const hash* mas_hash,unsigned int 
 			if ((*(mas_hash + i)).key != NULL && strncmp(key, (*(mas_hash + i)).key, HACHE_SIZE) == 0)
 			{
 				free(key);
+				free(key_storer);
 				return i + 1;
 			}
 		}
 
 		free(key);
+		free(key_storer);
+		return SUCCESSFUL_WORK;
 	}
-	else
-	{
-		free(key);
-		return MEMORY_MISTAKE;
-	}
+	free(key);
+	free(key_storer);
+
+	return MEMORY_MISTAKE;
 }
 
 void changePlaceOfElement(unsigned int place_in_masive, hash** mas_hash, cash** head, cash** tail, unsigned int size)
@@ -119,8 +121,11 @@ void changePlaceOfElement(unsigned int place_in_masive, hash** mas_hash, cash** 
 	hash storer_hash = *(*mas_hash + (place_in_masive - 1));
 	cash* storer_cash = storer_hash.id;
 
-	for (int i = place_in_masive - 1; i <(int) size - 1; i++)
+	for (int i = place_in_masive - 1; i < (int)size - 1; i++)
+	{
+		(* (*mas_hash + i)).id= (* (*mas_hash + i + 1)).id;
 		*(*mas_hash + i) = *(*mas_hash + i + 1);
+	}
 	*(*mas_hash + size - 1) = storer_hash;
 
 	if (storer_cash == *tail)
@@ -236,7 +241,7 @@ int findIdMenu(cash **head,cash**tail,hash **mas_hash,int *size)
 	if (place_in_masive == NOT_IN_CASH)
 	{
 		int err = findId(file, domen, &id);
-		if (err == MEMORY_ERROR|| err == TYPE_DAMAGED)
+		if (err == MEMORY_ERROR)
 		{
 			free(domen);
 			fclose(file);
@@ -245,7 +250,7 @@ int findIdMenu(cash **head,cash**tail,hash **mas_hash,int *size)
 			return ERROR;
 		}
 
-		if (err == NEED_ADD)
+		if (err == NEED_ADD || err == TYPE_DAMAGED)
 		{
 			free(domen);
 			fclose(file);
